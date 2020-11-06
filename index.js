@@ -127,6 +127,7 @@ app.get('/search/book/:bookId', async (req, res) => {
     })
   } catch (err) {
     console.error(err)
+    res.status(200).send('Book not found')
   } finally {
     connection.release()
   }
@@ -135,9 +136,11 @@ app.get('/search/book/:bookId', async (req, res) => {
 
 
 // find titles with alphabetnumeric
-app.get('/search/:alpha', async (req, res) => {
+// app.get('/search/:alpha', async (req, res) => {
+app.get('/search', async (req, res) => {
   // get the alphanumeric
-  const alpha = req.params.alpha
+  // const alpha = req.params.alpha
+  const alpha = req.query.alpha
   // set offset
   const offset = parseInt(req.query.offset) || 0
   // set limit per page
@@ -186,10 +189,11 @@ app.get('/', (req, res) => {
     alphaSeq
   })
 })
+
 // capture any other resource and methods
 app.use((req,res)=>{
   //redirect to landing page
-  res.status(200).type('text/html').redirect('/')
+  res.redirect('/')
 
 })
 

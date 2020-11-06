@@ -11,21 +11,21 @@
 <div class="row">
     <div class="col-md-6 d-flex justify-content-end">
       {{#if showPrevious}}
-      <form action="/search/{{alpha}}" method="get">
+      <form action="/search" method="get">
         <div class="form-group">
           <input type="hidden" name="offset" value="{{offsetBack}}">
         </div>
-        <button class="btn btn-danger" type="submit">Previous</button>
+        <button name="alpha" value="{{alpha}}" class="btn btn-danger" type="submit">Previous</button>
       </form>
       {{/if}}
     </div>
   {{#if showNext}}
     <div class="col-md-6 d-flex justify-content-start">
-      <form action="/search/{{alpha}}" method="get">
+      <form action="/search" method="get">
         <div class="form-group">
           <input type="hidden" name="offset" value="{{offsetNext}}">
         </div>
-        <button class="btn btn-success" type="submit">Next</button>
+        <button name="alpha" value="{{alpha}}" class="btn btn-success" type="submit">Next</button>
       </form>
     </div>
   {{/if}}

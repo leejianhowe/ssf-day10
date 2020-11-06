@@ -7,9 +7,11 @@
   <div class="row">
     {{#each alphaSeq}}
       <div style="text-align:center" class="col-md-3">
-          <a href="/search/{{this}}">
-            <button style="width:60%; border:solid 1px"class="btn btn-lg btn-light">{{this}}</button>
-          </a>
+        <!-- <a href="/search/{{this}}"> -->
+        <form action="/search" method="get">
+          <button type="submit" name="alpha" value="{{this}}" style="width:60%; border:solid 1px" class="btn btn-lg btn-light">{{this}}</button>
+        </form>
+        <!-- </a> -->
       </div>
     {{/each}}
   </div>

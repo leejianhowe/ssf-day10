@@ -20,13 +20,18 @@
     </div>
   {{/if}}
   {{#if showNext}}
-  <div class="col-md-6 d-flex justify-content-start">
-    <form action="/search/{{alpha}}" method="get">
-      <div class="form-group">
-        <input type="hidden" name="offset" value="{{offsetNext}}">
-      </div>
-      <button class="btn btn-success" type="submit">Next</button>
-    </form>
-  </div>
+    <div class="col-md-6 d-flex justify-content-start">
+      <form action="/search/{{alpha}}" method="get">
+        <div class="form-group">
+          <input type="hidden" name="offset" value="{{offsetNext}}">
+        </div>
+        <button class="btn btn-success" type="submit">Next</button>
+      </form>
+    </div>
   {{/if}}
+</div>
+<div class="row">
+  <div class="justify-content-end d-flex col-md-12">
+    <a href="/"><button class="btn btn-dark">Home</button></a>
+  </div>
 </div>

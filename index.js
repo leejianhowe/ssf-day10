@@ -2,9 +2,15 @@
 const express = require('express')
 const hbs = require('express-handlebars')
 const mysql = require('mysql2/promise')
+const withQuery = require('with-query').default
+const fetch = require('node-fetch')
 
 // create env variables
 const PORT = parseInt(process.argv[2]) || parseInt(process.env.PORT)
+const API_KEY = process.env.API_KEY
+
+// create URL
+const url = 'https://api.nytimes.com/svc/books/v3/reviews.json'
 
 // create SQL statment
 const SQL_FIND_LENGTH = "SELECT count(*) as bookCount FROM book2018 WHERE title LIKE ?"
@@ -51,25 +57,48 @@ app.set('view engine', 'hbs')
 
 
 // search NYTIMES API
-app.get('/review/:bookId',async(req,res)=>{
-  
+app.get('/reviews/:title', async (req, res) => {
+  const title = req.params.title
+  const query = withQuery(url, {
+    'api-key': API_KEY,
+    title: title
+  })
+  const connection = await fetch(query)
+  const results = await connection.json()
+  if (results.num_results) {
+    console.log(`results`, results)
+    res.status(200).type('text/html')
+    res.render('reviews', {
+      results,title
+    })
+  } else {
+    res.status(200).type('text.html')
+    res.render('not-found')
+
+  }
+
+
 })
 
 // load specific book_id
-app.get('/search/book/:bookId',async(req,res)=>{
+app.get('/search/book/:bookId', async (req, res) => {
   const bookId = req.params.bookId
   console.log(`bookId`, bookId)
   const connection = await pool.getConnection()
-  try{
-    const results = await connection.query(SQL_FIND_BOOK_BY_ID,[bookId])
+  try {
+    const results = await connection.query(SQL_FIND_BOOK_BY_ID, [bookId])
     const bookDetails = results[0][0]
     const genres = bookDetails.genres.split("|")
     const authors = bookDetails.authors.split("|")
     console.log(authors)
     console.log(genres)
     res.status(200).type('text/html')
-    res.render('book',{bookDetails, authors, genres})
-  } catch (err){
+    res.render('book', {
+      bookDetails,
+      authors,
+      genres
+    })
+  } catch (err) {
     console.error(err)
 
   } finally {

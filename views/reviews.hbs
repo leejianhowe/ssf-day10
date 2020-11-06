@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>Reviews of {{title}}</h1>
+  </div>
+</div>
+<div class="row">
+  <table class="table">
+    {{#each results.results}}
+      <tr>
+        <td>
+          <h2>{{this.book_title}}</h1>
+        </td>
+        <td>
+          <h3>By: {{this.book_author}}</h3>
+          <p>
+            Reviewer: {{this.byline}}
+          </p>
+          <p>Review Date: {{this.publication_dt}}</p>
+          <p>Review summary: {{this.summary}}</p>
+        </td>
+        <td>
+          <a href="{{this.url}}" target="_blank">Full review</a>
+        </td>
+    {{/each}}
+    </tr>
+  </table>
+</div>
+<footer style="text-align:center">
+  {{results.copyright}}
+</footer>

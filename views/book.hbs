@@ -1,5 +1,7 @@
 <div class="row">
-  <h2>{{bookDetails.title}}</h1>
+  <div class="col-md-12">
+    <h2>{{bookDetails.title}}</h1>
+  </div>
 </div>
 <div class="row">
   <div class="col-md-6"><img src="{{bookDetails.image_url}}" alt=""></div>
@@ -10,14 +12,18 @@
     </p>
 
 
-  <p>Pages: {{bookDetails.pages}}</p>
-  <p>Rating: {{bookDetails.rating}} ({{bookDetails.review_count}})</p>
-  <p>
-    Genres:
-    {{#each genres}}{{#if @index}}, {{/if}}{{this}}{{/each}}
-  </p>
-  <form action="/reviews/{{bookDetails.book_id}}" method="get">
-    <button type="submit" class="btn btn-info">Find Reviews</button>
-  </form>
+    <p>Pages: {{bookDetails.pages}}</p>
+    <p>Rating: {{bookDetails.rating}} ({{bookDetails.review_count}})</p>
+    <p>
+      Genres:
+      {{#each genres}}{{#if @index}}, {{/if}}{{this}}{{/each}}
+    </p>
+
+    <a href="/reviews/{{bookDetails.title}}"><button class="btn btn-info">Find Reviews</button></a>
+  </div>
 </div>
+<div class="row">
+  <div class="justify-content-end d-flex col-md-12">
+    <a href="/"><button class="btn btn-dark">Home</button></a>
+  </div>
 </div>

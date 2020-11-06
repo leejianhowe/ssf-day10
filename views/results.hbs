@@ -1,0 +1,32 @@
+<h1>Letter {{alpha}}</h1>
+<table>
+  {{#each titles}}
+    <tr>
+      <td>
+        <a href="/search/book/{{this.book_id}}">{{this.title}}</a>
+      </td>
+    </tr>
+  {{/each}}
+</table>
+<div class="row">
+  {{#if showPrevious}}
+    <div class="col-md-6 d-flex justify-content-end">
+      <form action="/search/{{alpha}}" method="get">
+        <div class="form-group">
+          <input type="hidden" name="offset" value="{{offsetBack}}">
+        </div>
+        <button class="btn btn-danger" type="submit">Previous</button>
+      </form>
+    </div>
+  {{/if}}
+  {{#if showNext}}
+  <div class="col-md-6 d-flex justify-content-start">
+    <form action="/search/{{alpha}}" method="get">
+      <div class="form-group">
+        <input type="hidden" name="offset" value="{{offsetNext}}">
+      </div>
+      <button class="btn btn-success" type="submit">Next</button>
+    </form>
+  </div>
+  {{/if}}
+</div>

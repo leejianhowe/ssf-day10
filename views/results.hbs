@@ -9,16 +9,16 @@
   {{/each}}
 </table>
 <div class="row">
-  {{#if showPrevious}}
     <div class="col-md-6 d-flex justify-content-end">
+      {{#if showPrevious}}
       <form action="/search/{{alpha}}" method="get">
         <div class="form-group">
           <input type="hidden" name="offset" value="{{offsetBack}}">
         </div>
         <button class="btn btn-danger" type="submit">Previous</button>
       </form>
+      {{/if}}
     </div>
-  {{/if}}
   {{#if showNext}}
     <div class="col-md-6 d-flex justify-content-start">
       <form action="/search/{{alpha}}" method="get">
@@ -30,8 +30,8 @@
     </div>
   {{/if}}
 </div>
-<div class="row">
-  <div class="justify-content-end d-flex col-md-12">
-    <a href="/"><button class="btn btn-dark">Home</button></a>
+<div class="row justify-content-end">
+  <div class="col-2">
+    <a href="/"><button class="btn btn-dark"><i class="fas fa-home"></i> Home</button></a>
   </div>
 </div>

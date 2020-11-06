@@ -4,6 +4,7 @@ const hbs = require('express-handlebars')
 const mysql = require('mysql2/promise')
 const withQuery = require('with-query').default
 const fetch = require('node-fetch')
+const morgan = require('morgan')
 
 // create env variables
 const PORT = parseInt(process.argv[2]) || parseInt(process.env.PORT)
@@ -14,7 +15,7 @@ const url = 'https://api.nytimes.com/svc/books/v3/reviews.json'
 
 // create SQL statment
 const SQL_FIND_LENGTH = "SELECT count(*) as bookCount FROM book2018 WHERE title LIKE ?"
-const SQL_FIND_TITLE = "SELECT * FROM book2018 WHERE title LIKE ? limit ? offset ?"
+const SQL_FIND_TITLE = "SELECT * FROM book2018 WHERE title LIKE ? ORDER BY title ASC limit ? offset ?"
 const SQL_FIND_BOOK_BY_ID = "SELECT * FROM book2018 WHERE book_id = ?"
 
 // create connectionPool
@@ -55,6 +56,8 @@ app.engine('hbs', hbs({
 }))
 app.set('view engine', 'hbs')
 
+// logging for all HTTP Req
+app.use(morgan('combined'))
 
 // search NYTIMES API
 app.get('/reviews/:title', async (req, res) => {
@@ -69,12 +72,11 @@ app.get('/reviews/:title', async (req, res) => {
     console.log(`results`, results)
     res.status(200).type('text/html')
     res.render('reviews', {
-      results,title
+      results
     })
   } else {
     res.status(200).type('text.html')
     res.render('not-found')
-
   }
 
 
@@ -82,25 +84,49 @@ app.get('/reviews/:title', async (req, res) => {
 
 // load specific book_id
 app.get('/search/book/:bookId', async (req, res) => {
+  // get param book_id
   const bookId = req.params.bookId
   console.log(`bookId`, bookId)
+  // get connection to DB
   const connection = await pool.getConnection()
   try {
+    // query DB
     const results = await connection.query(SQL_FIND_BOOK_BY_ID, [bookId])
+    // manipulate results
     const bookDetails = results[0][0]
     const genres = bookDetails.genres.split("|")
     const authors = bookDetails.authors.split("|")
-    console.log(authors)
-    console.log(genres)
-    res.status(200).type('text/html')
-    res.render('book', {
-      bookDetails,
-      authors,
-      genres
+    const jsonResult = {
+      'bookId': bookDetails.book_id,
+      'title': bookDetails.title,
+      'authors': authors,
+      'summary': bookDetails.description,
+      'pages': bookDetails.pages,
+      'rating': parseFloat(bookDetails.rating),
+      'ratingCount': bookDetails.rating_count,
+      'genre': genres
+    }
+    console.log(`jsonResult`, jsonResult)
+    res.format({
+      'text/html': function() {
+        res.status(200)
+        res.render('book', {
+          bookDetails,
+          authors,
+          genres
+        })
+      },
+      'application/json': function() {
+        res.status(200)
+        res.json(jsonResult)
+      },
+      default: function() {
+        // log the request and respond with 406
+        res.status(406).send('Not Acceptable')
+      }
     })
   } catch (err) {
     console.error(err)
-
   } finally {
     connection.release()
   }
@@ -160,6 +186,12 @@ app.get('/', (req, res) => {
     alphaSeq
   })
 })
+// capture any other resource and methods
+app.use((req,res)=>{
+  //redirect to landing page
+  res.status(200).type('text/html').redirect('/')
+
+})
 
 
 
@@ -173,9 +205,13 @@ pool.getConnection().then(conn => {
   // release the connection
   results[0].release()
   // start the server
-  app.listen(PORT, () => {
-    console.log(`APP listening on ${PORT} at http://localhost:${PORT}`)
-  })
+  if (API_KEY && PORT) {
+    app.listen(PORT, () => {
+      console.log(`APP listening on ${PORT} at http://localhost:${PORT}`)
+    })
+  } else {
+    console.log('no API_KEY or PORT')
+  }
 }).catch((e) => {
   console.log(`error:`, e)
 })
